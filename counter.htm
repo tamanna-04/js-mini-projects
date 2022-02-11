@@ -6,7 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Counter</title>
 
-    <link rel="stylesheet" href="counter.css">
+    <style>
+        *{margin: 0px; padding: 0%;}
+        #box{
+            height: 250px;
+            width: 250px;
+            background-color: red;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            cursor: pointer;
+        }
+        p{
+            margin-left: 42%;
+            margin-top: 37%;
+            font-size: 25px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,7 +34,20 @@
 
     <p id="clicksCunt">Box clicked 0 times</p>
 
-    <script src="counter.js"></script>
+    <script>
+        var count = 10;  //set countdown count
+
+        function countdown(){
+            console.log(count)   // starts countdown
+            count--              // reverses countdown
+            if(count == -1){    
+                clearInterval(id) // stops countdown, (id) tells what setInteval to stop
+            }
+        }
+
+        var id = setInterval(countdown, 1000);  //sets countdown interval
+
+    </script>
 
 </body>
 </html>
