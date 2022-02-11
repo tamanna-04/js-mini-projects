@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+
+    <style>
+        #snakeboard{
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        body{
+            background-color: black;
+        }
+    </style>
+
+</head>
+<body>
+    <canvas id="snakeboard" height="400px" width="400px"></canvas> <!-- <canvas> is used to draw graphics with js-->
+   
+    <script>
+        // Colors of the game
+        const boardBackground = "pink";
+        const boardBorder = "black";  // Border of canvas
+        const snakeColor = "red";
+        const snakeBorder = "lightcoral";
+
+        // velocities of snake
+        let dx = 10;
+        let dy = 0;
+
+        // direction
+        let isChangeDirection = false;
+
+
+        // Getting the canvas element
+        const snakeboard = document.getElementById("snakeboard");
+        const snakeboard_ctx = snakeboard.getContext("2d"); // Returns a 2 dimensionsal drwaing context
+
+
+        // Making the snake
+        let snake = [              // the snake is an array of objects, whose properties contain the position of the snake blocks.
+            {x: 200, y: 200},
+            {x: 190, y: 200},
+            {x: 180, y: 200},
+            {x: 170, y: 200},
+            {x: 160, y: 200}
+        ]
+
+        // Starting the game
+        main();
+        document.addEventListener('keydown', changeDirection);
+
+        // main function is called repeatedly to keep the game running
+        function main() {
+            clearCanvas();
+            drawSnake();
+            setTimeout( function onTick() {
+                clearCanvas();
+                moveSnake();
+                drawSnake();
+            
+                main();  // call main again to keep it going
+            }, 100);
+        }
+
+        // Clearing the canvas
+        function clearCanvas() {
+            // set colors for board
+            snakeboard_ctx.fillStyle = boardBackground;
+            snakeboard_ctx.strokeStyle = boardBorder;
+             
+            // draws a rectangle
+            snakeboard_ctx.fillRect(0, 0, snakeboard.width, snakeboard.height);  // X position, Y position, width, height
+            //drawing border for canvas
+            snakeboard_ctx.strokeRect(0, 0, snakeboard.width, snakeboard.height);
+        }
+
+        // Drawing snake on the canvas
+        function drawSnake() {
+            snake.forEach(drawSnakePart) // for each element (or object, in this case) in the array Snake, carry out the drawSnakePart function. 
+        }
+
+        function drawSnakePart(snakePart) {  // snakepart ???
+            // styles for snake
+            snakeboard_ctx.fillStyle = snakeColor;
+            snakeboard_ctx.strokeStyle = snakeBorder;
+
+            // drawing a rectangle for every snake part
+            snakeboard_ctx.fillRect(snakePart.x, snakePart.y, 10, 10);  //snakePart.x ????
+            // drawing borders around each snake part
+            snakeboard_ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
+        }
+
+        function moveSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy}; // takes 0th index element and changes it from 200 to 210, .x takes x key
+            snake.unshift(head); //adds new head                      pair and .y takes y key pair.
+            snake.pop();        // pops last element of the array snake 
+        }                                                          
+
+        function changeDirection(event) {
+            const LEFT = 65;
+            const RIGHT = 68;
+            const UP = 87;
+            const DOWN = 83;
+
+            // snake cant return
+            if(isChangeDirection) return;
+            isChangeDirection = true;
+
+            const keyPressed = event.keyCode;  // ???
+            const goingUp = dy === -10;
+            const goingDown = dy === 10;
+            const goingLeft = dx === -10;
+            const goingRight = dx === 10;
+
+            if(keyPressed === LEFT && !goingRight) {
+                dx = -10;
+                dy = 0;
+            }
+            if(keyPressed === RIGHT && !goingLeft) {
+                dx = 10;
+                dy = 0;
+            }if(keyPressed === UP && !goingDown) {
+                dx = 0;
+                dy = -10;
+            }if(keyPressed === DOWN && !goingUp) {
+                dx = 0;
+                dy = 10;
+            }
+        }
+
+
+
+
+
+    </script>
+</body>
+</html>
