@@ -6,13 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Toggle</title>
 
-    <link rel="stylesheet" href="dark-mode.css">
+    <style>
+        input {
+            -webkit-appearance: none;
+            position: relative;
+            width: 200px;
+            height: 54px;
+            background-color: rgb(255, 255, 255);
+            border: 1px solid black;
+            border-radius: 50px;
+            margin-left: 42%;
+            margin-top: 5%;
+        }
+
+        input:before {
+            content: "";
+            position: absolute;
+            height: 50px;
+            width: 50px;
+            background-color: rgb(0, 0, 0);
+            border: 1px solid rgb(255, 255, 255);
+            border-radius: 50px;
+        }
+  
+        input:checked {
+            background-color: rgb(255, 255, 255);
+        }
+  
+        input:checked:before {
+            transform: translate(290%);
+        }
+
+        p{
+            font-size: 50px;
+            margin-left: 30%;
+            margin-top: 6%;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <input type="checkbox" id="toggle" onclick="whatever()">
     <br><br><br>
     <p id="p">Click on the Toggle Button</p> 
 
-    <script src="dark-mode.js"></script>
+    <script>
+        var toggleMode = document.getElementById("p")
+        var count = 0
+
+        function whatever(){
+            count ++
+            if(count % 2 == 0){
+                document.body.style.backgroundColor = "white"
+                toggleMode.style.color = "black"
+            }
+            else{
+                document.body.style.backgroundColor = "black"
+                toggleMode.style.color = "white"
+            }
+        }
+    </script>
 </body>
 </html>
