@@ -35,17 +35,14 @@
     <p id="clicksCunt">Box clicked 0 times</p>
 
     <script>
-        var count = 10;  //set countdown count
+        var n = 1;
 
-        function countdown(){
-            console.log(count)   // starts countdown
-            count--              // reverses countdown
-            if(count == -1){    
-                clearInterval(id) // stops countdown, (id) tells what setInteval to stop
-            }
+        box.addEventListener("click", changeCount);
+
+        function changeCount(){
+            document.getElementById("clicksCunt").innerText = "Box clicked " + n + " times"
+            n++
         }
-
-        var id = setInterval(countdown, 1000);  //sets countdown interval
 
     </script>
 
