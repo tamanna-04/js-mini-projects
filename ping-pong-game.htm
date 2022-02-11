@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Ping Pong</title>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800px" height="600px"></canvas> 
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const canvas_ctx = canvas.getContext('2d');
+
+        var ballX = 50;
+        var ballSpeedX = 10;
+        var ballY = 50;
+        var ballSpeedY = 4;
+
+        var paddle1Y = 250;
+        var paddle2Y = 250;
+        const PADDLE_THICKNESS = 10;
+        const PADDLE_HEIGHT = 150;
+
+        var playerScore = 0;
+        var computerScore = 0;
+        const WINNING_SCORE = 3;
+        var showWinScreen = false;
+
+        window.onload = function main() {
+            drawComponents();
+
+            var framesPerSecond = 30;
+
+            setInterval(function() {
+                drawComponents();
+                moveComponents();
+            }, 1000/framesPerSecond);
+
+            canvas.addEventListener('mousemove', function(evt) {
+                mousePosition = calculateMousePosition(evt);
+                paddle1Y = mousePosition.y - (PADDLE_HEIGHT/2);
+            });
+
+            canvas.addEventListener('mousedown', handleMouseClick)
+        }
+
+        function drawComponents() {
+            // draws canvas background
+            drawRect(0, 0, canvas.width, canvas.height, 'black');
+
+            if(showWinScreen) {
+                canvas_ctx.fillStyle = 'white';
+                if(playerScore >= WINNING_SCORE) {
+                    canvas_ctx.fillText('You WON!', 350, 200);
+                } else if(computerScore >= WINNING_SCORE) {
+                    canvas_ctx.fillText('HA! SUCK IT YOU LOST', 340, 200)
+                }
+                canvas_ctx.fillText("click to continue", 350, 500);
+                return;
+            }
+
+            // draws net
+            drawNet();
+
+            // draws left paddle
+            drawRect(0, paddle1Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
+            // draws right computer paddle
+            drawRect(canvas.width - PADDLE_THICKNESS, paddle2Y, PADDLE_THICKNESS, PADDLE_HEIGHT, 'white');
+
+            // draws ball
+            drawCircle(ballX, ballY, 10, 'white');
+
+            // scores
+            canvas_ctx.fillText(playerScore, 100, 100);
+            canvas_ctx.fillText(computerScore, canvas.width - 100, 100);
+        }
+
+        function moveComponents() {
+            if(showWinScreen) {
+                return;
+            }
+
+            moveComputerPaddle();
+
+            // x axis
+            ballX += ballSpeedX;
+            if(ballX > canvas.width) {   // RIGHT WALL
+                if(ballY > paddle2Y && ballY < paddle2Y+PADDLE_HEIGHT) {
+                    ballSpeedX = -ballSpeedX;   // HIT!!
+
+                    var deltaY = ballY - (paddle2Y + PADDLE_HEIGHT/2); // to set vertical speed of ball to change based on where the ball hits the paddle
+                    ballSpeedY += deltaY * 0.2;  // deltaY is high and ballSpeedY will be too fast, hence slow down by *0.3
+                }
+                else{
+                    playerScore++;  // score needs to be caclulated before ball resets
+                    ballReset();  // aww miss :( 
+                }
+            }
+
+            if(ballX < 0) {            // LEFT WALL
+                if(ballY > paddle1Y && ballY < paddle1Y+PADDLE_HEIGHT) {
+                    ballSpeedX = -ballSpeedX;   // HIT!!
+
+                    var deltaY = ballY - (paddle1Y + PADDLE_HEIGHT/2);
+                    ballSpeedY += deltaY * 0.2;
+                }
+                else{
+                    computerScore++; // score needs to be calculated  before ball resets
+                    ballReset();  // aww miss :(
+                }
+            }
+
+            // y axis
+            ballY += ballSpeedY;
+            if(ballY > canvas.height) {   // BOTTOM WALL
+                ballSpeedY = -ballSpeedY;
+            }
+            if(ballY < 0) {     // TOP WALL
+                ballSpeedY = -ballSpeedY;
+            }
+        }
+
+
+        // computer paddle
+        function moveComputerPaddle() {
+            var paddle2Center = paddle2Y + PADDLE_HEIGHT/2;
+
+            if(paddle2Center < ballY - 35) {
+                paddle2Y += 6;
+            }
+            if(paddle2Center > ballY + 35) {
+                paddle2Y -= 6;
+            }
+        }
+
+
+        // calculating mouse position
+        function calculateMousePosition(evt) {
+            var rect = canvas.getBoundingClientRect();
+            var root = document.documentElement;   // ??
+            var mouseX = evt.clientX - rect.left - root.scrollLeft; // takes the position it is getting for mouseX and mouseY and confines it
+            var mouseY = evt.clientY - rect.top - root.scrollTop;  // to the playable 800x600 space of the canvas, by subtracting the root 
+            return{                                               // scroll element. (hope it makes sense?)
+                x: mouseX,
+                y: mouseY
+            };   
+        }
+
+
+        // reset ball 
+        function ballReset() {
+            if(playerScore >= WINNING_SCORE || computerScore >= WINNING_SCORE) {
+                showWinScreen = true;
+            }
+            ballSpeedX = -ballSpeedX;
+            ballX = canvas.width/2;
+            ballY = canvas.height/2;
+        }
+
+
+        // click to continue
+        function handleMouseClick(evt) {
+            if(showWinScreen) {
+                playerScore = 0;
+                computerScore = 0;
+                showWinScreen = false;
+            }
+        }
+
+
+        // draw funstions
+        function drawRect(x, y, width, height, drawColor) {
+            canvas_ctx.fillStyle = drawColor;
+            canvas_ctx.fillRect(x, y, width, height, drawColor);
+        }
+        
+        function drawCircle(centerX, centerY, radius, drawColor) {
+            canvas_ctx.fillStyle = drawColor;
+            canvas_ctx.beginPath();   // X, Y, raduis, start angle, end angle (in radians),  counterclockwise?
+            canvas_ctx.arc(centerX, centerY, radius, 0, Math.PI*2, true); // tue = clockwise, false = counterclockwise
+            canvas_ctx.fill();
+        }
+
+        function drawNet() {
+            for(var i = 0; i<canvas.height; i+=40) {
+                drawRect(canvas.width/2 - 1, i, 2, 20, 'white');
+            }
+        }
+    </script>
+</body>
+</html>
